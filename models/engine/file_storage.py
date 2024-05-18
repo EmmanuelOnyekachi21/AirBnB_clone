@@ -1,5 +1,7 @@
+#!/usr/bin/python3
 """
-serializes instances to a JSON file and deserializes JSON file to instances
+This module defines the FileStorage class, which serializes instances
+to a JSON file and deserializes JSON file to instances.
 """
 
 
