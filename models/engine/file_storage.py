@@ -1,77 +1,98 @@
 #!/usr/bin/python3
 """
-This module defines the FileStorage class, which serializes instances
-to a JSON file and deserializes JSON file to instances.
+    responsible for persisting object state in file_db.
 """
-
-
 import json
-import os
+from os import path
 from models.base_model import BaseModel
 from models.user import User
 from models.state import State
 from models.city import City
-from models.amenity import Amenity
 from models.place import Place
+from models.amenity import Amenity
 from models.review import Review
 
 
 class FileStorage:
     """
-    serializes instances to a JSON file and deserializes JSON file to instances
+        FileStorage.
     """
-
-    __file_path = "file.json"
-    __objects = {}
-
-    models = {
+    ALL_CLASSES = {
         'BaseModel': BaseModel,
         'User': User,
         'State': State,
         'City': City,
-        'Amenity': Amenity,
         'Place': Place,
-        'Review': Review,
-        }
+        'Amenity': Amenity,
+        'Review': Review
+    }
+    __file_path = 'file.json'
+    __objects = {}
 
-    def all(self):
+    def new(self, obj) -> None:
+
         """
-        Returns the dictionary `__objects`
+            this adding New Object to file storage.
+        """
+        # construct key
+        key = "{}.{}".format(
+            obj.__class__.__name__, obj.id
+        )
+        self.__objects[key] = obj
+
+    def all(self) -> dict:
+        """
+            this method is responsible for returning the whole
+            object in the file __objects dictionary.
         """
         return self.__objects
 
-    def new(self, obj):
+    def save(self) -> None:
         """
-        sets in __objects the obj with key <obj class name>.id
+            for converting the python objects into python dictionary,
+            so they can be stored into the file storage,this process is called
+            serialization.
         """
-        key = f"{obj.__class__.__name__}.{obj.id}"
-        self.__objects[key] = obj
+        # declare dictionary.
+        serialized_obj = {}
 
-    def save(self):
-        """
-        serializes __objects to the JSON file (path: __file_path)
-        """
-        objects = {}
+        for k, v in self.__objects.items():
+            # call the to_dict method in the basemodel
+            # to represent every object to dict.
+            serialized_obj[k] = v.to_dict()
 
-        for key, value in self.__objects.items():
-            objects[key] = value.to_dict()
+        # print(serialized_obj)
+        # dump into file storage
+        with open(self.__file_path, "w") as obj_dic:
+            json.dump(serialized_obj, obj_dic, indent=2)
 
-        with open(self.__file_path, "w") as file:
-            json.dump(objects, file, indent=2)
-
-    def reload(self):
+    def reload(self) -> None:
         """
-        deserializes the JSON file to __objects
-        (only if the JSON file (__file_path) exists ; otherwise, do nothing.)
+            responsible for reloading the object in file storage and
+            dynamically create objects out of the data in the file storage
         """
-        if (
-                (os.path.exists(self.__file_path)) and
-                (os.path.getsize(self.__file_path) > 0)):
-            with open(self.__file_path, "r") as file:
-                data = json.load(file)
 
-                for key, value in data.items():
-                    class_name, obj_id = key.split('.')
-                    cls = self.models[class_name]
-                    obj = cls(**value)
-                    self.__objects[key] = obj
+        # open file
+        # split the key of the dictionary
+        # dynamically create classes base on the class name.
+        if path.exists(self.__file_path) and\
+                path.getsize(self.__file_path) > 0:
+            with open(self.__file_path, "r") as db:
+
+                file_content = json.load(db)
+
+                for k, v in file_content.items():
+
+                    # split the dictionary key
+                    cls_name, cls_key = k.split('.')
+
+                    # dynamically create the class object
+                    # again according to the entry in db.
+
+                    # same as doing.
+                    global_class = self.ALL_CLASSES[cls_name]
+
+                    result = global_class(**v)
+                    # print(result)
+
+                    self.__objects[k] = result
