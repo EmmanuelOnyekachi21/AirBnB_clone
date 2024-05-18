@@ -1,66 +1,93 @@
 #!/usr/bin/python3
 """
-    BaseModel for creating every single attributes
-    that will be inherited for all objects
+defines all common attributes/methods for other classes
 """
-
 
 import uuid
 from datetime import datetime
+import models
 
 
 class BaseModel:
     """
-        this is for object creation.
-    """
-    TIME_FORMAT = "%Y-%m-%dT%H:%M:%S.%f"
+    defines all common attributes/methods for other classes.
 
-    def __init__(self, **kwargs):
+    Attributes:
+        id (str):               assigned with an uuid when
+                                    an instance is created
+        created_at (datetime):     assign with the current datetime when
+                                    an instance is created.
+        updated_at (datetime):     assign with the current datetime
+                                    when an instance is created.  It will
+                                    be updated every time you change the object
+    Methods:
+        save(self):     updates the public instance attribute `updated_at`
+                        with the current datetime
+        to_dict(self):  returns a dictionary containing all keys/values of
+                        `__dict__` of the instance
+    """
+    TIME_FORM = "%Y-%m-%dT%H:%M:%S.%f"
+
+    def __init__(self, *args, **kwargs):
         """
-            init function
+        Initializes the BaseModel instance.
+
+        Arguments:
+            kwargs:             to re-create an instance with a `dict`
+                                representation.
+        Attributes:
+        id (str):               assigned with an uuid when
+                                    an instance is created
+        created_at (datetime):     assign with the current datetime when
+                                    an instance is created.
+        updated_at (datetime):     assign with the current datetime
+                                    when an instance is created.  It will
+                                    be updated every time you change the object
+
         """
         if kwargs:
             for key, value in kwargs.items():
-                if key in ["created_at", "updated_at"]:
-                    value = datetime.strptime(value, self.TIME_FORMAT)
+                if key == 'created_at' or key == 'updated_at':
+                    value = datetime.strptime(value, self.TIME_FORM)
                 if key != '__class__':
                     setattr(self, key, value)
-
         else:
-            import models
             self.id = str(uuid.uuid4())
             self.created_at = datetime.now()
             self.updated_at = datetime.now()
             models.storage.new(self)
 
-    def __str__(self) -> str:
+    def __str__(self):
         """
-            str function
+        Returns a string represnetation of the BaseModel instance.
+
+        Returns:
+            str:    A string containing the class name, ID,
+                    and dictionary representation.
         """
-        obj_str = "[{}] ({}) {}".format(
-            self.__class__.__name__,
-            self.id,
-            self.__dict__
-        )
-        return obj_str
+        return f"[{self.__class__.__name__}] ({self.id}) {self.__dict__}"
 
     def save(self):
         """
-            save method
+        updates the public instance attribute `updated_at` with
+        the current datetime
         """
-        import models
         self.updated_at = datetime.now()
         models.storage.save()
 
-    def to_dict(self) -> dict:
+    def to_dict(self):
         """
-            dic method
+        returns a dictionary containing all keys/values of
+        `__dict__` of the instance.
+
+        Returns:
+            dict: A dictionary containing all keys/values of
+            `__dict__` of the instance.
         """
-        obj_dict = self.__dict__.copy()
-        obj_dict['__class__'] = self.__class__.__name__
+        dictionary = self.__dict__.copy()
+        dictionary["__class__"] = self.__class__.__name__
 
-        for k, v in obj_dict.items():
-            if isinstance(v, datetime):
-                obj_dict[k] = v.isoformat()
-
-        return obj_dict
+        for key, value in dictionary.items():
+            if isinstance(value, datetime):
+                dictionary[key] = value.isoformat()
+        return dictionary
