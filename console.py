@@ -217,8 +217,8 @@ class HBNBCommand(cmd.Cmd):
         models.storage.save()
 
 if __name__ == "__main__":
-    if not sys.stdin.isatty():
+    if sys.stdin.isatty():
+        HBNBCommand().cmdloop()
+    else:
         for command in sys.stdin:
             HBNBCommand().onecmd(command)
-    else:
-        HBNBCommand().cmdloop()
