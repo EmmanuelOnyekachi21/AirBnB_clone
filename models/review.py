@@ -1,15 +1,17 @@
 #!/usr/bin/python3
+"""
+defines all common attributes/methods for Review.
+"""
 
-"""
-Review class that inherits from BaseModel
-"""
 
 from models.base_model import BaseModel
 
 
 class Review(BaseModel):
-    """ Class that defines attributes for a review """
-
+    """
+    Defines all common attributes/methods for Review,
+    while inheriting from the `BaseModel` class.
+    """
     place_id = ""
     user_id = ""
     text = ""
