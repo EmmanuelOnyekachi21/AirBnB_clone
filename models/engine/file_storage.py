@@ -34,16 +34,16 @@ class FileStorage:
         Returns a dictionary of valid classes and their references.
         """
 
-        classes = {
-            'BaseModel': BaseModel,
-            'User': User,
-            'State': State,
-            'City': City,
-            'Amenity': Amenity,
-            'Place': Place,
-            'Review': Review,
-            }
-        return classes
+    classes = {
+        'BaseModel': BaseModel,
+        'User': User,
+        'State': State,
+        'City': City,
+        'Amenity': Amenity,
+        'Place': Place,
+        'Review': Review,
+        }
+    return classes
 
     def all(self):
         """
@@ -93,8 +93,6 @@ class FileStorage:
                 (os.path.exists(self.__file_path)) and
                 (os.path.getsize(self.__file_path) > 0)):
             with open(FileStorage.__file_path, "r") as file:
-                obj_dict = json.load(file)
-                obj_dict = {key: self.classes()[value["__class__"]](**value)
-                            for key, value in obj_dict.items()}
+                data = json.load(file)
 
-                FileStorage.__objects = obj_dict
+
