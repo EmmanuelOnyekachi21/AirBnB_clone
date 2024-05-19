@@ -220,5 +220,8 @@ if __name__ == "__main__":
     if sys.stdin.isatty():
         HBNBCommand().cmdloop()
     else:
+        print("(hbnb) ")
         for command in sys.stdin:
-            HBNBCommand().onecmd(command)
+            HBNBCommand().onecmd(command.strip())
+        # Print the prompt after processing commands from the stdin
+        print("(hbnb) ")
