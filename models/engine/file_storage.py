@@ -47,7 +47,7 @@ class FileStorage:
             dict: A dictionary of all stored objects with keys as
             <class name>.id and values as the object instances.
         """
-        return self.__objects
+        return FileStorage.__objects
 
     def new(self, obj):
         """
@@ -57,7 +57,7 @@ class FileStorage:
             obj: The object to be stored.
         """
         key = f"{obj.__class__.__name__}.{obj.id}"
-        self.__objects[key] = obj
+        FileStorage.__objects[key] = obj
 
     def save(self):
         """
@@ -69,11 +69,11 @@ class FileStorage:
         """
         objects = {}
 
-        for key, value in self.__objects.items():
+        for key, value in FileStorage.__objects.items():
             objects[key] = value.to_dict()
 
-        with open(self.__file_path, "w") as file:
-            json.dump(objects, file, indent=2)
+        with open(FileStorage.__file_path, "w") as file:
+            json.dump(objects, file)
 
     def reload(self):
         """
@@ -86,11 +86,11 @@ class FileStorage:
         if (
                 (os.path.exists(self.__file_path)) and
                 (os.path.getsize(self.__file_path) > 0)):
-            with open(self.__file_path, "r") as file:
+            with open(FileStorage.__file_path, "r") as file:
                 data = json.load(file)
 
                 for key, value in data.items():
                     class_name, obj_id = key.split('.')
-                    cls = self.models[class_name]
+                    cls = FileStorage.models[class_name]
                     obj = cls(**value)
-                    self.__objects[key] = obj
+                    FileStorage.__objects[key] = obj
