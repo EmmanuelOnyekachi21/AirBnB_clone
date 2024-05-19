@@ -28,17 +28,36 @@ class HBNBCommand(cmd.Cmd):
                   "Place"]
 
     def do_quit(self, arg):
-        """Quit : Exits the command interpreter.
-        This program exit the (hbnb) shell"""
+        """
+        Exits the command interpreter.
+        USAGE: Terminate the (hbnb)  Command-line interpreter ptogram.
+        EXAMPLE:
+            quit
+        Note:This command exit interpreter program.
+        """
         return True
 
     def do_EOF(self, arg):
-        """do_EOF : Exits the commanf interpreter.
-        This program is similar to the do_quit command, it exit the (hbnb) shell."""
+        """
+        Exits the command interpreter.
+        USAGE: Terminate the (hbnb)  command-line interpreter.
+        EXAMPLE:
+            EOF
+        Note: This program is similar to the do_quit command, it exit the
+        (hbnb) shell.
+        """
         return True
 
     def emptyline(self):
-        """Action to be taken if emptyline is passed"""
+        """
+        Print the prompt (hbnb) when empty line is entered.
+        USAGE: This method is called when an empty-line is entered into the
+        command-line interface.
+        EXAMPLE:
+            (Press the enter key without any command and the
+        console will print (hbnb)
+        Note: This command prints empty-line only if the input is empty.
+        """
         pass
 
     def do_create(self, arg):
