@@ -28,11 +28,13 @@ class HBNBCommand(cmd.Cmd):
                   "Place"]
 
     def do_quit(self, arg):
-        """Exits the command interpreter"""
+        """Quit : Exits the command interpreter.
+        This program exit the (hbnb) shell"""
         return True
 
     def do_EOF(self, arg):
-        """Exits the command interpreter"""
+        """do_EOF : Exits the commanf interpreter.
+        This program is similar to the do_quit command, it exit the (hbnb) shell."""
         return True
 
     def emptyline(self):
