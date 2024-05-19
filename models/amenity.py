@@ -1,15 +1,13 @@
 #!/usr/bin/python3
-"""
-defines all common attributes/methods for Amenity.
-"""
 
+"""
+Amenity class that inherits from BaseModel
+"""
 
 from models.base_model import BaseModel
 
 
 class Amenity(BaseModel):
-    """
-    Defines all common attributes/methods for Amenity,
-    while inheriting from the `BaseModel` class.
-    """
+    """ Class that defines attributes for amenity """
+
     name = ""

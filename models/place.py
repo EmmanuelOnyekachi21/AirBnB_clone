@@ -1,17 +1,15 @@
 #!/usr/bin/python3
-"""
-defines all common attributes/methods for Place.
-"""
 
+"""
+Place class that inherits from BaseModel
+"""
 
 from models.base_model import BaseModel
 
 
 class Place(BaseModel):
-    """
-    Defines all common attributes/methods for Place,
-    while inheriting from the `BaseModel` class.
-    """
+    """ Class that defines attributes for a place """
+
     city_id = ""
     user_id = ""
     name = ""

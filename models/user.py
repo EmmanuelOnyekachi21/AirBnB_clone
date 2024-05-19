@@ -1,17 +1,15 @@
 #!/usr/bin/python3
-"""
-defines all common attributes/methods for User.
-"""
 
+"""
+User class that inherits from BaseModel
+"""
 
 from models.base_model import BaseModel
 
 
 class User(BaseModel):
-    """
-    Defines all common attributes/methods for User,
-    while inheriting from the `BaseModel` class.
-    """
+    """ Class that defines attributes for an user """
+
     email = ""
     password = ""
     first_name = ""
