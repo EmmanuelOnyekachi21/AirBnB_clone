@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 """
-defines all common attributes/methods for Place.
+Place Module: This module defines all common attributes/methods for Place.
 """
 
 
@@ -9,7 +9,7 @@ from models.base_model import BaseModel
 
 class Place(BaseModel):
     """
-    Defines all common attributes/methods for Place,
+    Place class: This class defines all common attributes/methods for Place,
     while inheriting from the `BaseModel` class.
     """
     city_id = ""
