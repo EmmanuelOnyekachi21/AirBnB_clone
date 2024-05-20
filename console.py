@@ -23,8 +23,10 @@ class HBNBCommand(cmd.Cmd):
         prompt (str): The prompt string displayed to the user.
     Methods:
         do_quit(arg): Handles the 'quit' command to exit the program.
-        emptyline(): Does nothing when an empty line + ENTER shouldn’t execute anything
-        do_EOF(arg): Handles the end-of-file condition to gracefully exit the program.
+        emptyline(): Does nothing when an empty line + ENTER 
+                        shouldn’t execute anything
+        do_EOF(arg): Handles the end-of-file condition to gracefully
+                        exit the program.
     """
     prompt = '(hbnb) '
     class_list = ["BaseModel", "User", "Amenity", "City", "State", "Review",
@@ -32,34 +34,19 @@ class HBNBCommand(cmd.Cmd):
 
     def do_quit(self, arg):
         """
-        Exits the command interpreter.
-        USAGE: Terminate the (hbnb)  Command-line interpreter ptogram.
-        EXAMPLE:
-            quit
-        Note:This command exit interpreter program.
-        """
-        return True
-
-    def do_EOF(self, arg):
-        """
-        Exits the command interpreter.
-        USAGE: Terminate the (hbnb)  command-line interpreter.
-        EXAMPLE:
-            EOF
-        Note: This program is similar to the do_quit command, it exit the
-        (hbnb) shell.
+        Quit command to exit the program.
+        Args:
+            arg: Unused argument (required by cmd.Cmd).
+        Returns:
+            None
+        Raises:
+            SystemExit: Exits the program with a status code of 0.
         """
         return True
 
     def emptyline(self):
         """
-        Print the prompt (hbnb) when empty line is entered.
-        USAGE: This method is called when an empty-line is entered into the
-        command-line interface.
-        EXAMPLE:
-            (Press the enter key without any command and the
-        console will print (hbnb)
-        Note: This command prints empty-line only if the input is empty.
+        Does nothing when an empty line + ENTER shouldn’t execute anything
         """
         pass
 
@@ -213,6 +200,63 @@ class HBNBCommand(cmd.Cmd):
             return
         setattr(obj, attr_name, (type(getattr(obj, attr_name, "")))(attr_val))
         obj.save()
+
+    def default(self, arg):
+        """
+        Overrides the default implementation to allow for some additional
+        use cases.
+        """
+        pattern = r'^([^.]*)\.(.*?)\((.*?)\)$'
+        matches = re.match(pattern, arg)
+        if matches:
+            class_name = matches.group(1)
+            command = matches.group(2)
+            args = matches.group(3)
+        else:
+            print(f"*** Unknown syntax: {arg}")
+            return
+
+        if class_name not in self.class_list:
+            print("** class doesn't exist **")
+            return
+        if command == "all":
+            self.do_all(class_name)
+        elif command == "count":
+            count = 0
+            obj_dict = models.storage.all()
+            for key in obj_dict.keys():
+                if class_name == (key[:len(class_name)]):
+                    count += 1
+                    print(count)
+        elif command == "show":
+            line = " ".join([class_name, args.strip('"')])
+            self.do_show(line)
+        elif command == "destroy":
+            line = " ".join([class_arg, args.strip('"')])
+            self.do_destroy(line)
+        elif command == "update":
+            dict_list = re.findall(r'\{(.+?)\}', args)
+            if dict_list:
+                args_list = args.split(", ")
+                class_id = args_list[0].strip('"')
+                dict_args_list = dict_list[0].split(", ")
+                for dict_args in dict_args_list:
+                    key, val = dict_args.split(": ")
+                    key = key.strip('"')
+                    line = " ".join([class_arg, class_id, key.strip("'"),
+                                     val.strip("'")])
+                    print(line)
+                    self.do_update(line)
+            else:
+                args_list = args.split(", ")
+                class_id, attr_name, attr_val = args_list
+                attr_name = attr_name.strip('"')
+                line = " ".join([class_arg, class_id.strip('"'),
+                                attr_name.strip("'"), attr_val.strip("'")])
+                print(line)
+                self.do_update(line)
+        else:
+            print(f"*** Unknown syntax: {arg}")
 
 
 if __name__ == '__main__':
