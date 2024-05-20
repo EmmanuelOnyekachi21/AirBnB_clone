@@ -1,6 +1,6 @@
 #!/usr/bin/python3
-"""Defines the HBNBCommand class for the AirBNB clone project.
-This class provides a command interpreter for managing project objects.
+"""This module provides the HBNBCommand class which provides
+a command interpreter to be used in the AirBNB clone project
 """
 
 import cmd
@@ -16,164 +16,242 @@ from models.place import Place
 
 
 class HBNBCommand(cmd.Cmd):
-    """Command interpreter class for the AirBNB clone project.
-    Inherits from cmd.Cmd and implements custom commands for managing objects.
+    """This is the command interpreter class for the AirBNB project
+        which inherits from the cmd module.
+
+    The Class implements various project specific commands and the usual
+    `help` to get tips on usage and `quit` or `EOF` command to exit program
+
     """
-    
     prompt = "(hbnb) "
-    classes = {"BaseModel": BaseModel, "User": User, "Amenity": Amenity, "City": City, "State": State, "Review": Review, "Place": Place}
+    class_list = ["BaseModel", "User", "Amenity", "City", "State", "Review",
+                  "Place"]
 
     def do_quit(self, arg):
-        """Exit the command interpreter."""
+        """Exits the command interpreter"""
         return True
 
     def do_EOF(self, arg):
-        """Exit the command interpreter on EOF (Ctrl-D)."""
+        """Exits the command interpreter"""
         return True
 
     def emptyline(self):
-        """Do nothing on empty input line."""
+        """Action to be taken if emptyline is passed"""
         pass
 
     def do_create(self, arg):
-        """Create a new instance of a given class, save it, and print its ID.
-        Usage: create <class name>
-        Example:
+        """
+        Creates a new instance of a given class, saves it and prints the id
+        USAGE: create <class name>
+        EXAMPLE:
             create BaseModel
             create User
         """
-        if not arg:
+        if arg:
+            if arg == "BaseModel":
+                new = BaseModel()
+            elif arg == "User":
+                new = User()
+            elif arg == "Amenity":
+                new = Amenity()
+            elif arg == "City":
+                new = City()
+            elif arg == "State":
+                new = State()
+            elif arg == "Review":
+                new = Review()
+            elif arg == "Place":
+                new = Place()
+            else:
+                print("** class doesn't exist **")
+                return
+            new.save()
+            print(new.id)
+        else:
             print("** class name missing **")
-            return
-        if arg not in self.classes:
-            print("** class doesn't exist **")
-            return
-        new_instance = self.classes[arg]()
-        new_instance.save()
-        print(new_instance.id)
 
     def do_show(self, arg):
-        """Print the string representation of an instance based on class name and ID.
-        Usage: show <class name> <id>
-        Example:
-            show BaseModel 1234-5678-1234
         """
-        args = arg.split()
-        if not args:
+        Prints the string representation of an instance based on the
+            given class name and id.
+        USAGE: show <class name> <id>
+        EXAMPLE:
+            show BaseModel 87654321-1234-5678-12345678
+            show User 12345678-1234-1234-1234-12345678
+        Note: class name and id must be provided
+        """
+        arg_list = arg.split()
+        if len(arg_list) == 0:
             print("** class name missing **")
             return
-        if len(args) < 2:
+        elif len(arg_list) == 1:
             print("** instance id missing **")
             return
-        class_name, instance_id = args
-        if class_name not in self.classes:
+        else:
+            class_arg = arg_list[0]
+            class_id = arg_list[1]
+        if class_arg not in self.class_list:
             print("** class doesn't exist **")
             return
-        key = f"{class_name}.{instance_id}"
-        instance = storage.all().get(key)
-        if instance:
-            print(instance)
+        key = f"{class_arg}.{class_id}"
+        obj_dict = storage.all()
+        if key in obj_dict:
+            print(obj_dict[key])
         else:
             print("** no instance found **")
 
     def do_destroy(self, arg):
-        """Delete an instance based on class name and ID.
-        Usage: destroy <class name> <id>
-        Example:
-            destroy BaseModel 1234-5678-1234
         """
-        args = arg.split()
-        if not args:
+        Deletes an instance based on the class name and id.
+        USAGE: destroy <class name> <id>
+        EXAMPLE:
+            destroy BaseModel 87654321-1234-5678-12345678
+            destroy User 12345678-1234-1234-1234-12345678
+        Note: class name and id must be provided
+        """
+        arg_list = arg.split()
+        if len(arg_list) == 0:
             print("** class name missing **")
             return
-        if len(args) < 2:
+        elif len(arg_list) == 1:
             print("** instance id missing **")
             return
-        class_name, instance_id = args
-        if class_name not in self.classes:
+        else:
+            class_arg = arg_list[0]
+            class_id = arg_list[1]
+        if class_arg not in self.class_list:
             print("** class doesn't exist **")
             return
-        key = f"{class_name}.{instance_id}"
-        instance = storage.all().pop(key, None)
-        if instance:
+        key = f"{class_arg}.{class_id}"
+        obj_dict = storage.all()
+        if key in obj_dict:
+            del obj_dict[key]
             storage.save()
         else:
             print("** no instance found **")
 
-    def do_all(self, arg):
-        """Print all instances of a given class, or all instances if no class is specified.
-        Usage: all [<class name>]
-        Example:
+    def do_all(self, class_arg):
+        """
+        Prints string representation of all instances of a given class based
+            on class name provided or all instances is printed if class name
+            not provided.
+        USAGE: all <class name>
+        EXAMPLE:
             all BaseModel
+            all User
             all
         """
-        instances = storage.all()
-        if arg:
-            if arg not in self.classes:
+        all_list = []
+        obj_dict = storage.all()
+        if class_arg:
+            if class_arg not in self.class_list:
                 print("** class doesn't exist **")
                 return
-            instances = {k: v for k, v in instances.items() if k.startswith(arg)}
-        print([str(instance) for instance in instances.values()])
+            for key in obj_dict.keys():
+                if class_arg == (key[:len(class_arg)]):
+                    all_list.append(str(obj_dict[key]))
+        else:
+            for key in obj_dict.keys():
+                all_list.append(str(obj_dict[key]))
+        print(all_list)
 
     def do_update(self, arg):
-        """Update an instance by adding or updating an attribute.
-        Usage: update <class name> <id> <attribute name> "<attribute value>"
-        Example:
-            update BaseModel 1234-5678-1234 name "Alice"
         """
-        pattern = r'"[^"]*"|\S+'
-        args = re.findall(pattern, arg)
-        if len(args) < 4:
-            print("** class name missing **" if len(args) < 1 else 
-                  "** instance id missing **" if len(args) < 2 else 
-                  "** attribute name missing **" if len(args) < 3 else 
-                  "** value missing **")
+        Updates an instance based on the class name and id by adding or
+            updating attribute.
+        USAGE: update <class name> <id> <attribute name> "<attribute value>"
+        EXAMPLE:
+            update BaseModel 87654321-1234-5678-12345678 name "Emmanuel"
+            update User 12345678-1234-1234-1234-12345678 email "ea@z.com"
+        Note: all arguments must be provided exactly and id, created_at and
+            updated_at can't be updated.
+        """
+        pattern = r'"[^"]+"|\S+'
+        arg_list = re.findall(pattern, arg)
+        if len(arg_list) == 0:
+            print("** class name missing **")
             return
-        class_name, instance_id, attr_name, attr_value = args
-        if class_name not in self.classes:
+        elif len(arg_list) == 1:
+            print("** instance id missing **")
+            return
+        elif len(arg_list) == 2:
+            print("** attribute name missing **")
+            return
+        elif len(arg_list) == 3:
+            print("** value missing **")
+            return
+        else:
+            class_arg = arg_list[0]
+            class_id = arg_list[1]
+            attr_name = arg_list[2]
+            attr_val = arg_list[3].strip('"')
+        if class_arg not in self.class_list:
             print("** class doesn't exist **")
             return
-        key = f"{class_name}.{instance_id}"
-        instance = storage.all().get(key)
-        if not instance:
+        key = f"{class_arg}.{class_id}"
+        obj_dict = storage.all()
+        if key in obj_dict:
+            obj = obj_dict[key]
+        else:
             print("** no instance found **")
             return
-        attr_value = attr_value.strip('"')
-        setattr(instance, attr_name, type(getattr(instance, attr_name, attr_value))(attr_value))
-        instance.save()
+        setattr(obj, attr_name, (type(getattr(obj, attr_name, "")))(attr_val))
+        obj.save()
 
     def default(self, arg):
-        """Handle unrecognized commands.
-        Additional usage: <class name>.<command>(<args>)
+        """
+        Overrides the default implementation to allow for some additional
+            use cases.
+        Additional Usage: <class name>.<command>(args)
         """
         pattern = r'^([^.]*)\.(.*?)\((.*?)\)$'
-        match = re.match(pattern, arg)
-        if not match:
+        matches = re.match(pattern, arg)
+        if matches:
+            class_arg = matches.group(1)
+            command = matches.group(2)
+            args = matches.group(3)
+        else:
             print(f"*** Unknown syntax: {arg}")
             return
-        class_name, command, params = match.groups()
-        if class_name not in self.classes:
+        if class_arg not in self.class_list:
             print("** class doesn't exist **")
             return
         if command == "all":
-            self.do_all(class_name)
+            self.do_all(class_arg)
         elif command == "count":
-            count = sum(1 for key in storage.all() if key.startswith(class_name))
+            count = 0
+            obj_dict = storage.all()
+            for key in obj_dict.keys():
+                if class_arg == (key[:len(class_arg)]):
+                    count += 1
             print(count)
         elif command == "show":
-            self.do_show(f"{class_name} {params.strip('\"')}")
+            line = " ".join([class_arg, args.strip('"')])
+            self.do_show(line)
         elif command == "destroy":
-            self.do_destroy(f"{class_name} {params.strip('\"')}")
+            line = " ".join([class_arg, args.strip('"')])
+            self.do_destroy(line)
         elif command == "update":
-            if '{' in params and '}' in params:
-                id_part, dict_part = params.split(', {')
-                dict_part = '{' + dict_part
-                id_part = id_part.strip().strip('"')
-                updates = eval(dict_part)
-                for key, value in updates.items():
-                    self.do_update(f'{class_name} {id_part} {key} "{value}"')
+            dict_list = re.findall(r'\{(.+?)\}', args)
+            if dict_list:
+                args_list = args.split(", ")
+                class_id = args_list[0].strip('"')
+                dict_args_list = dict_list[0].split(", ")
+                for dict_args in dict_args_list:
+                    key, val = dict_args.split(": ")
+                    key = key.strip('"')
+                    line = " ".join([class_arg, class_id, key.strip("'"),
+                                     val.strip("'")])
+                    print(line)
+                    self.do_update(line)
             else:
-                self.do_update(params.replace(",", " ", 1))
+                args_list = args.split(", ")
+                class_id, attr_name, attr_val = args_list
+                attr_name = attr_name.strip('"')
+                line = " ".join([class_arg, class_id.strip('"'),
+                                attr_name.strip("'"), attr_val.strip("'")])
+                print(line)
+                self.do_update(line)
         else:
             print(f"*** Unknown syntax: {arg}")
 
