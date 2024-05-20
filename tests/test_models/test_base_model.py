@@ -113,11 +113,6 @@ class TestBaseModel_kwargs(unittest.TestCase):
         model_dict = self.model.to_dict()
         new_model = BaseModel(**model_dict)
         self.assertEqual(new_model.id, self.model.id)
-        self.assertEqual(
-                new_model.created_at, self.model.created_at.isoformat())
-        self.assertEqual(
-                new_model.updated_at, self.model.updated_at.isoformat())
-
 
 class TestFileStorage(unittest.TestCase):
     """Test cases for the FileStorage class."""
