@@ -32,19 +32,34 @@ class HBNBCommand(cmd.Cmd):
 
     def do_quit(self, arg):
         """
-        Quit command to exit the program.
-        Args:
-            arg: Unused argument (required by cmd.Cmd).
-        Returns:
-            None
-        Raises:
-            SystemExit: Exits the program with a status code of 0.
+        Exits the command interpreter.
+        USAGE: Terminate the (hbnb)  Command-line interpreter ptogram.
+        EXAMPLE:
+            quit
+        Note:This command exit interpreter program.
+        """
+        return True
+
+    def do_EOF(self, arg):
+        """
+        Exits the command interpreter.
+        USAGE: Terminate the (hbnb)  command-line interpreter.
+        EXAMPLE:
+            EOF
+        Note: This program is similar to the do_quit command, it exit the
+        (hbnb) shell.
         """
         return True
 
     def emptyline(self):
         """
-        Does nothing when an empty line + ENTER shouldn’t execute anything
+        Print the prompt (hbnb) when empty line is entered.
+        USAGE: This method is called when an empty-line is entered into the
+        command-line interface.
+        EXAMPLE:
+            (Press the enter key without any command and the
+        console will print (hbnb)
+        Note: This command prints empty-line only if the input is empty.
         """
         pass
 
