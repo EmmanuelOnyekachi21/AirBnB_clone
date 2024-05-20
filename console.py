@@ -1,9 +1,8 @@
 #!/usr/bin/python3
-"""This module provides the HBNBCommand class which provides
-a command interpreter to be used in the AirBNB clone project
+"""This script contains the HBNBCommand class for the AirBNB clone project.
+It provides a command interpreter for managing objects within the project.
 """
 
-import cmd
 from models.base_model import BaseModel
 import re
 from models import storage
@@ -13,37 +12,35 @@ from models.city import City
 from models.state import State
 from models.review import Review
 from models.place import Place
+import cmd
 
 
 class HBNBCommand(cmd.Cmd):
-    """This is the command interpreter class for the AirBNB project
-        which inherits from the cmd module.
-
-    The Class implements various project specific commands and the usual
-    `help` to get tips on usage and `quit` or `EOF` command to exit program
-
+    """Command processor class for the AirBNB project.
+    This class allows for interactive command line commands to manage
+    and manipulate the application's objects.
     """
+
     prompt = "(hbnb) "
     class_list = ["BaseModel", "User", "Amenity", "City", "State", "Review",
                   "Place"]
 
     def do_quit(self, arg):
-        """Exits the command interpreter"""
+        """Exit the command line interpreter."""
         return True
 
     def do_EOF(self, arg):
-        """Exits the command interpreter"""
+        """Exit the interpreter using EOF (Ctrl+D)."""
         return True
 
     def emptyline(self):
-        """Action to be taken if emptyline is passed"""
+        """Handle empty input line to do nothing."""
         pass
 
     def do_create(self, arg):
-        """
-        Creates a new instance of a given class, saves it and prints the id
-        USAGE: create <class name>
-        EXAMPLE:
+        """Create a new instance of a specified class, save it, and print the ID.
+        Usage: create <class name>
+        Example:
             create BaseModel
             create User
         """
@@ -71,14 +68,11 @@ class HBNBCommand(cmd.Cmd):
             print("** class name missing **")
 
     def do_show(self, arg):
-        """
-        Prints the string representation of an instance based on the
-            given class name and id.
-        USAGE: show <class name> <id>
-        EXAMPLE:
-            show BaseModel 87654321-1234-5678-12345678
-            show User 12345678-1234-1234-1234-12345678
-        Note: class name and id must be provided
+        """Display the string representation of an instance given its class name and ID.
+        Usage: show <class name> <id>
+        Example:
+            show BaseModel 1234-5678-1234
+            show User 1234-5678-1234
         """
         arg_list = arg.split()
         if len(arg_list) == 0:
@@ -101,13 +95,11 @@ class HBNBCommand(cmd.Cmd):
             print("** no instance found **")
 
     def do_destroy(self, arg):
-        """
-        Deletes an instance based on the class name and id.
-        USAGE: destroy <class name> <id>
-        EXAMPLE:
-            destroy BaseModel 87654321-1234-5678-12345678
-            destroy User 12345678-1234-1234-1234-12345678
-        Note: class name and id must be provided
+        """Delete an instance based on its class name and ID.
+        Usage: destroy <class name> <id>
+        Example:
+            destroy BaseModel 1234-5678-1234
+            destroy User 1234-5678-1234
         """
         arg_list = arg.split()
         if len(arg_list) == 0:
@@ -131,12 +123,10 @@ class HBNBCommand(cmd.Cmd):
             print("** no instance found **")
 
     def do_all(self, class_arg):
-        """
-        Prints string representation of all instances of a given class based
-            on class name provided or all instances is printed if class name
-            not provided.
-        USAGE: all <class name>
-        EXAMPLE:
+        """Print all string representations of instances of a given class,
+        or all instances if no class is specified.
+        Usage: all <class name>
+        Example:
             all BaseModel
             all User
             all
@@ -156,15 +146,11 @@ class HBNBCommand(cmd.Cmd):
         print(all_list)
 
     def do_update(self, arg):
-        """
-        Updates an instance based on the class name and id by adding or
-            updating attribute.
-        USAGE: update <class name> <id> <attribute name> "<attribute value>"
-        EXAMPLE:
-            update BaseModel 87654321-1234-5678-12345678 name "Emmanuel"
-            update User 12345678-1234-1234-1234-12345678 email "ea@z.com"
-        Note: all arguments must be provided exactly and id, created_at and
-            updated_at can't be updated.
+        """Update an instance based on the class name and ID by adding or modifying an attribute.
+        Usage: update <class name> <id> <attribute name> "<attribute value>"
+        Example:
+            update BaseModel 1234-5678-1234 name "Alice"
+            update User 1234-5678-1234 email "alice@example.com"
         """
         pattern = r'"[^"]+"|\S+'
         arg_list = re.findall(pattern, arg)
@@ -199,9 +185,7 @@ class HBNBCommand(cmd.Cmd):
         obj.save()
 
     def default(self, arg):
-        """
-        Overrides the default implementation to allow for some additional
-            use cases.
+        """Handle unrecognized commands, allowing for additional syntax.
         Additional Usage: <class name>.<command>(args)
         """
         pattern = r'^([^.]*)\.(.*?)\((.*?)\)$'
