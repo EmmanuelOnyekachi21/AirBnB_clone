@@ -1,29 +1,32 @@
 #!/usr/bin/python3
-"""This module provides the HBNBCommand class which provides
-a command interpreter to be used in the AirBNB clone project
+"""
+Command line interpreter (CLI) using the CMD module.
 """
 
 import cmd
-from models.base_model import BaseModel
+import sys
+import models
 import re
-from models import storage
+from models.base_model import BaseModel
 from models.user import User
-from models.amenity import Amenity
-from models.city import City
 from models.state import State
-from models.review import Review
+from models.city import City
+from models.amenity import Amenity
 from models.place import Place
+from models.review import Review
 
 
 class HBNBCommand(cmd.Cmd):
-    """This is the command interpreter class for the AirBNB project
-        which inherits from the cmd module.
-
-    The Class implements various project specific commands and the usual
-    `help` to get tips on usage and `quit` or `EOF` command to exit program
-
     """
-    prompt = "(hbnb) "
+    Command-line interpreter for the HBNB application.
+    Attributes:
+        prompt (str): The prompt string displayed to the user.
+    Methods:
+        do_quit(arg): Handles the 'quit' command to exit the program.
+        emptyline(): Does nothing when an empty line + ENTER shouldn’t execute anything
+        do_EOF(arg): Handles the end-of-file condition to gracefully exit the program.
+    """
+    prompt = '(hbnb) '
     class_list = ["BaseModel", "User", "Amenity", "City", "State", "Review",
                   "Place"]
 
@@ -60,13 +63,22 @@ class HBNBCommand(cmd.Cmd):
         """
         pass
 
+    def do_EOF(self, arg):
+        """
+        Handles end-of-file (EOF) to gracefully exit the program.
+        Args:
+            arg: Unused argument (required by cmd.Cmd).
+        Returns:
+            bool: True to indicate the end-of-file condition.
+        Notes:
+            Typing CTRL+D (UNIX-like systems) triggers EOF.
+        """
+        return True
+
     def do_create(self, arg):
         """
-        Creates a new instance of a given class, saves it and prints the id
-        USAGE: create <class name>
-        EXAMPLE:
-            create BaseModel
-            create User
+        Create a new instance of BaseModel, saves it to the JSON file
+        and prints the id.
         """
         if arg:
             if arg == "BaseModel":
@@ -93,42 +105,35 @@ class HBNBCommand(cmd.Cmd):
 
     def do_show(self, arg):
         """
-        Prints the string representation of an instance based on the
-            given class name and id.
-        USAGE: show <class name> <id>
-        EXAMPLE:
-            show BaseModel 87654321-1234-5678-12345678
-            show User 12345678-1234-1234-1234-12345678
-        Note: class name and id must be provided
+        Prints the string representation of an instance based
+        on the class and id.
         """
         arg_list = arg.split()
         if len(arg_list) == 0:
             print("** class name missing **")
             return
+
         elif len(arg_list) == 1:
             print("** instance id missing **")
             return
         else:
-            class_arg = arg_list[0]
+            class_name = arg_list[0]
             class_id = arg_list[1]
-        if class_arg not in self.class_list:
+
+        if class_name not in self.class_list:
             print("** class doesn't exist **")
             return
-        key = f"{class_arg}.{class_id}"
-        obj_dict = storage.all()
-        if key in obj_dict:
-            print(obj_dict[key])
-        else:
+
+        key = f"{class_name}.{class_id}"
+        obj_dict = models.storage.all()
+        if key not in obj_dict:
             print("** no instance found **")
+        else:
+            print(obj_dict[key])
 
     def do_destroy(self, arg):
         """
         Deletes an instance based on the class name and id.
-        USAGE: destroy <class name> <id>
-        EXAMPLE:
-            destroy BaseModel 87654321-1234-5678-12345678
-            destroy User 12345678-1234-1234-1234-12345678
-        Note: class name and id must be provided
         """
         arg_list = arg.split()
         if len(arg_list) == 0:
@@ -151,25 +156,20 @@ class HBNBCommand(cmd.Cmd):
         else:
             print("** no instance found **")
 
-    def do_all(self, class_arg):
+    def do_all(self, arg):
         """
-        Prints string representation of all instances of a given class based
-            on class name provided or all instances is printed if class name
-            not provided.
-        USAGE: all <class name>
-        EXAMPLE:
-            all BaseModel
-            all User
-            all
+        Prints all string representation of all instances
+        based or not on the class name.
         """
         all_list = []
-        obj_dict = storage.all()
-        if class_arg:
-            if class_arg not in self.class_list:
+        obj_dict = models.storage.all()
+        if arg:
+            if arg not in self.class_list:
                 print("** class doesn't exist **")
                 return
+
             for key in obj_dict.keys():
-                if class_arg == (key[:len(class_arg)]):
+                if arg == (key[:len(arg)]):
                     all_list.append(str(obj_dict[key]))
         else:
             for key in obj_dict.keys():
@@ -178,14 +178,7 @@ class HBNBCommand(cmd.Cmd):
 
     def do_update(self, arg):
         """
-        Updates an instance based on the class name and id by adding or
-            updating attribute.
-        USAGE: update <class name> <id> <attribute name> "<attribute value>"
-        EXAMPLE:
-            update BaseModel 87654321-1234-5678-12345678 name "Emmanuel"
-            update User 12345678-1234-1234-1234-12345678 email "ea@z.com"
-        Note: all arguments must be provided exactly and id, created_at and
-            updated_at can't be updated.
+        update <class name> <id> <attribute name> "<attribute value>"
         """
         pattern = r'"[^"]+"|\S+'
         arg_list = re.findall(pattern, arg)
@@ -202,15 +195,17 @@ class HBNBCommand(cmd.Cmd):
             print("** value missing **")
             return
         else:
-            class_arg = arg_list[0]
+            class_name = arg_list[0]
             class_id = arg_list[1]
             attr_name = arg_list[2]
-            attr_val = arg_list[3].strip('"')
-        if class_arg not in self.class_list:
+            attr_value = arg_list[3].strip('"')
+
+        if class_name not in self.class_list:
             print("** class doesn't exist **")
             return
-        key = f"{class_arg}.{class_id}"
-        obj_dict = storage.all()
+
+        key = f"{class_name}.{class_id}"
+        obj_dict = models.storage.all()
         if key in obj_dict:
             obj = obj_dict[key]
         else:
@@ -218,63 +213,6 @@ class HBNBCommand(cmd.Cmd):
             return
         setattr(obj, attr_name, (type(getattr(obj, attr_name, "")))(attr_val))
         obj.save()
-
-    def default(self, arg):
-        """
-        Overrides the default implementation to allow for some additional
-            use cases.
-        Additional Usage: <class name>.<command>(args)
-        """
-        pattern = r'^([^.]*)\.(.*?)\((.*?)\)$'
-        matches = re.match(pattern, arg)
-        if matches:
-            class_arg = matches.group(1)
-            command = matches.group(2)
-            args = matches.group(3)
-        else:
-            print(f"*** Unknown syntax: {arg}")
-            return
-        if class_arg not in self.class_list:
-            print("** class doesn't exist **")
-            return
-        if command == "all":
-            self.do_all(class_arg)
-        elif command == "count":
-            count = 0
-            obj_dict = storage.all()
-            for key in obj_dict.keys():
-                if class_arg == (key[:len(class_arg)]):
-                    count += 1
-            print(count)
-        elif command == "show":
-            line = " ".join([class_arg, args.strip('"')])
-            self.do_show(line)
-        elif command == "destroy":
-            line = " ".join([class_arg, args.strip('"')])
-            self.do_destroy(line)
-        elif command == "update":
-            dict_list = re.findall(r'\{(.+?)\}', args)
-            if dict_list:
-                args_list = args.split(", ")
-                class_id = args_list[0].strip('"')
-                dict_args_list = dict_list[0].split(", ")
-                for dict_args in dict_args_list:
-                    key, val = dict_args.split(": ")
-                    key = key.strip('"')
-                    line = " ".join([class_arg, class_id, key.strip("'"),
-                                     val.strip("'")])
-                    print(line)
-                    self.do_update(line)
-            else:
-                args_list = args.split(", ")
-                class_id, attr_name, attr_val = args_list
-                attr_name = attr_name.strip('"')
-                line = " ".join([class_arg, class_id.strip('"'),
-                                attr_name.strip("'"), attr_val.strip("'")])
-                print(line)
-                self.do_update(line)
-        else:
-            print(f"*** Unknown syntax: {arg}")
 
 
 if __name__ == '__main__':
