@@ -21,7 +21,7 @@ footer{
 /* Container */
 .container{
   max-width: 1000px;
-  border: 1px solid red;
+  /* border: 1px solid red; */
   margin: 30px auto;
   position: relative;
 }
