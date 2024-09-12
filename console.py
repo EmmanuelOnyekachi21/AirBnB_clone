@@ -159,12 +159,18 @@ class HBNBCommand(cmd.Cmd):
         else:
             print("** no instance found **")
             return
-        attr_type = type(getattr(obj, attr_name))
-        if attr_type is int:
-            attr_val = int(attr_val)
-        elif attr_type is float:
-            attr_val = float(attr_val)
+        if hasattr(obj, attr_name):
+            current_attr = getattr(obj, attr_name)
+            attr_type = type(current_attr)
 
+            try:
+                if attr_type is int:
+                    attr_val = int(attr_val)
+                elif attr_type is float:
+                    attr_val = float(attr_val)
+            except ValueError:
+                return
+                
         setattr(obj, attr_name, attr_val)
         obj.save()
 
