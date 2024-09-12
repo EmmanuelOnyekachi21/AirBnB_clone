@@ -39,7 +39,7 @@ class TestFileStorage(unittest.TestCase):
         self.reset_storage()
         with self.assertRaises(TypeError) as e:
             FileStorage.__init__()
-        self.assertEqual(str(e.exception), "descriptor '__init__' of 'object' object needs an argument")
+        self.assertEqual(str(e.exception), "object needs an argument")
 
     def test_init_with_arguments(self):
         """Test __init__ with excessive parameters."""
@@ -141,14 +141,14 @@ class TestFileStorage(unittest.TestCase):
         self.reset_storage()
         with self.assertRaises(TypeError) as e:
             FileStorage.all()
-        self.assertEqual(str(e.exception), "all() missing 1 required positional argument: 'self'")
+        self.assertEqual(str(e.exception), "all() missing 1 argument: (self)")
 
     def test_all_excessive_arguments(self):
         """Test all() with excessive parameters."""
         self.reset_storage()
         with self.assertRaises(TypeError) as e:
             FileStorage.all(self, 98)
-        self.assertEqual(str(e.exception), "all() takes 1 positional argument but 2 were given")
+        self.assertEqual(str(e.exception), "all() takes 1 argument")
 
     def helper_test_new(self, classname):
         """Helper to test new() method for a given class."""
@@ -193,7 +193,7 @@ class TestFileStorage(unittest.TestCase):
         self.reset_storage()
         with self.assertRaises(TypeError) as e:
             storage.new()
-        self.assertEqual(str(e.exception), "new() missing 1 required positional argument: 'obj'")
+        self.assertEqual(str(e.exception), "new() missing 1 argument")
 
     def test_new_excessive_arguments(self):
         """Test new() with excessive parameters."""
@@ -201,7 +201,7 @@ class TestFileStorage(unittest.TestCase):
         obj = BaseModel()
         with self.assertRaises(TypeError) as e:
             storage.new(obj, 98)
-        self.assertEqual(str(e.exception), "new() takes 2 positional arguments but 3 were given")
+        self.assertEqual(str(e.exception), "new() takes 2 arguments")
 
     def helper_test_save(self, classname):
         """Helper to test save() method for a given class."""
@@ -213,7 +213,7 @@ class TestFileStorage(unittest.TestCase):
         storage.save()
         self.assertTrue(os.path.isfile(FileStorage._FileStorage__file_path))
         data = {key: obj.to_dict()}
-        with open(FileStorage._FileStorage__file_path, "r", encoding="utf-8") as file:
+        with open(FileStorage._FileStorage__file_path, "r") as file:
             self.assertEqual(len(file.read()), len(json.dumps(data)))
             file.seek(0)
             self.assertEqual(json.load(file), data)
@@ -251,14 +251,14 @@ class TestFileStorage(unittest.TestCase):
         self.reset_storage()
         with self.assertRaises(TypeError) as e:
             FileStorage.save()
-        self.assertEqual(str(e.exception), "save() missing 1 required positional argument: 'self'")
+        self.assertEqual(str(e.exception), "save() missing 1 argument")
 
     def test_save_excessive_arguments(self):
         """Test save() with excessive parameters."""
         self.reset_storage()
         with self.assertRaises(TypeError) as e:
             FileStorage.save(self, 98)
-        self.assertEqual(str(e.exception), "save() takes 1 positional argument but 2 were given")
+        self.assertEqual(str(e.exception), "save() takes 1 argument")
 
     def helper_test_reload(self, classname):
         """Helper to test reload() method for a given class."""
