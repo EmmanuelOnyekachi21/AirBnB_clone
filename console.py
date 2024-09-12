@@ -6,12 +6,12 @@ It provides a command interpreter for managing objects within the project.
 from models.base_model import BaseModel
 import re
 from models import storage
-from models.user import User
-from models.amenity import Amenity
-from models.city import City
-from models.state import State
-from models.review import Review
-from models.place import Place
+# from models.user import User
+# from models.amenity import Amenity
+# from models.city import City
+# from models.state import State
+# from models.review import Review
+# from models.place import Place
 import cmd
 
 
@@ -47,18 +47,18 @@ class HBNBCommand(cmd.Cmd):
         if arg:
             if arg == "BaseModel":
                 new = BaseModel()
-            elif arg == "User":
-                new = User()
-            elif arg == "Amenity":
-                new = Amenity()
-            elif arg == "City":
-                new = City()
-            elif arg == "State":
-                new = State()
-            elif arg == "Review":
-                new = Review()
-            elif arg == "Place":
-                new = Place()
+            # elif arg == "User":
+            #     new = User()
+            # elif arg == "Amenity":
+            #     new = Amenity()
+            # elif arg == "City":
+            #     new = City()
+            # elif arg == "State":
+            #     new = State()
+            # elif arg == "Review":
+            #     new = Review()
+            # elif arg == "Place":
+            #     new = Place()
             else:
                 print("** class doesn't exist **")
                 return
