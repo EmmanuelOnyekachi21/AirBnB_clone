@@ -12,3 +12,6 @@ else
     # If no directories are found, inform the user
     echo "No __pycache__ directory found."
 fi
+
+# Make all files executable
+find . -type f -exec chmod +x {} +
