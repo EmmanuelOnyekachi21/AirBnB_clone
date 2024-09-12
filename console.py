@@ -15,7 +15,7 @@ class HBNBCommand(cmd.Cmd):
     Classsjfn
     """
 
-    class_list = ['BaseModel',]
+    class_list = ['BaseModel']
     prompt = "(hbnb) "
 
     def do_quit(self, arg):
