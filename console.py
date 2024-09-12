@@ -66,7 +66,7 @@ class HBNBCommand(cmd.Cmd):
             class_arg = arg_list[0]
             class_id = arg_list[1]
 
-        if class_arg not in HBNBCommand.class_list:
+        if class_arg not in self.class_list:
             print("** class doesn't exist **")
             return
         key = f"{class_arg}.{class_id}"
@@ -91,7 +91,7 @@ class HBNBCommand(cmd.Cmd):
         else:
             class_arg = arg_list[0]
             class_id = arg_list[1]
-        if class_arg not in HBNBCommand.class_list:
+        if class_arg not in self.class_list:
             print("** class doesn't exist **")
             return
         key = f"{class_arg}.{class_id}"
@@ -108,7 +108,7 @@ class HBNBCommand(cmd.Cmd):
         """
         obj_list = []
         if arg:
-            if arg not in HBNBCommand.class_list:
+            if arg not in self.class_list:
                 print("** class doesn't exist **")
                 return
 
@@ -147,7 +147,7 @@ class HBNBCommand(cmd.Cmd):
             attr_name = arg_list[2]
             attr_val = arg_list[3].strip('"')
 
-        if class_arg not in HBNBCommand.class_list:
+        if class_arg not in self.class_list:
             print("** class doesn't exist **")
             return
 
