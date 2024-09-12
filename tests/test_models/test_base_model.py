@@ -6,6 +6,8 @@ Tests
 import unittest
 from models.base_model import BaseModel
 from datetime import datetime
+from models.engine.file_storage import FileStorage
+import os
 
 
 
@@ -119,6 +121,64 @@ class TestBaseModel_Kwargs(unittest.TestCase):
         model_dict = self.model.to_dict()
         new_model = BaseModel(**model_dict)
         self.assertEqual(new_model.id, self.model.id)
+
+class TestFileStorage(unittest.TestCase):
+    """Test cases for the FileStorage class."""
+
+    def setUp(self):
+        """Set up the test environment.
+        """
+        self.storage = FileStorage()
+        self.base_model = BaseModel()
+
+    def tearDown(self):
+        """Tear Down the test environment."""
+        del self.storage
+        del self.base_model
+
+    def test_all(self):
+        """
+        Test the all() method.
+        """
+        all_objects = self.storage.all()
+        self.assertIsInstance(all_objects, dict)
+
+    def test_new(self):
+        """
+        Test the new() method.
+        """
+        self.storage.new(self.base_model)
+        all_objects = self.storage.all()
+        self.assertIn('BaseModel.' + self.base_model.id, all_objects)
+        self.assertEqual(
+                all_objects['BaseModel.' + self.base_model.id],
+                self.base_model)
+
+    def test_save_reload(self):
+        """Test the save() and reload() methods."""
+        # Save the BaseModel Instance
+        self.storage.new(self.base_model)
+        self.storage.save()
+
+        # Reload the data and check if BaseModel instance is present
+        new_storage = FileStorage()
+        new_storage.reload()
+        all_objects = new_storage.all()
+        self.assertIn('BaseModel.' + self.base_model.id, all_objects)
+        self.assertIsInstance(
+                all_objects['BaseModel.' + self.base_model.id], BaseModel)
+
+    def test_save_file_exists(self):
+        """Test the save() method when the file exists."""
+        self.storage.save()
+        self.assertTrue(os.path.exists(self.storage._FileStorage__file_path))
+
+    def test_save_file_not_exists(self):
+        """Test the save() method when the file does not exist."""
+        os.remove(self.storage._FileStorage__file_path)
+        self.assertFalse(os.path.exists(self.storage._FileStorage__file_path))
+        self.storage.save()
+        self.assertTrue(os.path.exists(self.storage._FileStorage__file_path))
 
 
 if __name__ == '__main__':
