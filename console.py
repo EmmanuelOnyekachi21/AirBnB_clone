@@ -214,6 +214,11 @@ class HBNBCommand(cmd.Cmd):
                 if class_arg == key.split('.')[0]:
                     count += 1
             print(count)
+        if command == "show":
+            args = args.strip('"')
+            line = " ".join([class_arg, args])
+            self.do_show(line)
+            
         else:
             print(f"*** Unknown syntax: {arg}")
 
