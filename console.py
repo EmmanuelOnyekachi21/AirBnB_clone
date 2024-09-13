@@ -15,7 +15,7 @@ class HBNBCommand(cmd.Cmd):
     Classsjfn
     """
 
-    class_list = ['BaseModel']
+    class_list = ['BaseModel', 'User']
     prompt = "(hbnb) "
 
     def do_quit(self, arg):
@@ -158,7 +158,7 @@ class HBNBCommand(cmd.Cmd):
         else:
             print("** no instance found **")
             return
-        
+
         current_attr = getattr(obj, attr_name, "")
         attr_type = type(current_attr)
 
