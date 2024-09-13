@@ -171,6 +171,25 @@ class HBNBCommand(cmd.Cmd):
             attr_val = float(attr_val)
         setattr(obj, attr_name, attr_val)
         obj.save()
+        
+    def default(self, arg):
+        """Handle unrecognized commands, allowing for additional syntax.
+        Additional Usage: <class name>.<command>(args)
+        """
+        pattern = r'^([^.]*)\.(.*?)\((.*?)\)$'
+        matches = re.match(pattern, arg)
+        if matches:
+            class_arg = matches.group(1)
+            command = matches.group(2)
+            args = matches.group(3)
+        else:
+            print(f"*** Unknown syntax: {arg}")
+            return
+        if class_arg not in self.class_list:
+            print("** class doesn't exist **")
+            return
+        if command == "all":
+            self.do_all(class_arg)
 
 
 if __name__ == '__main__':
