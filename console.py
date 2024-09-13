@@ -206,6 +206,14 @@ class HBNBCommand(cmd.Cmd):
             return
         if command == "all":
             self.do_all(class_arg)
+        if command == "count":
+            count = 0
+            obj_dict = storage.all()
+            
+            for key in obj_dict.keys():
+                if class_arg == key.split('.')[0]:
+                    count += 1
+            print(count)
         else:
             print(f"*** Unknown syntax: {arg}")
 
