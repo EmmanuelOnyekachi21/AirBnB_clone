@@ -219,6 +219,10 @@ class HBNBCommand(cmd.Cmd):
             line = " ".join([class_arg, args])
             self.do_show(line)
             
+        if command == "destroy":
+            line = " ".join([class_arg, args.strip('"')])
+            self.do_destroy(line)
+            
         else:
             print(f"*** Unknown syntax: {arg}")
 
