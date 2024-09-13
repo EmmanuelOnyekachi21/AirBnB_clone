@@ -8,6 +8,7 @@ import cmd
 from models import storage
 import re
 from models.base_model import BaseModel
+from models.user import User
 
 
 class HBNBCommand(cmd.Cmd):
@@ -43,6 +44,8 @@ class HBNBCommand(cmd.Cmd):
         if arg:
             if arg == "BaseModel":
                 new = BaseModel()
+            if arg == "User":
+                new = User()
             else:
                 print("** class doesn't exist **")
                 return
