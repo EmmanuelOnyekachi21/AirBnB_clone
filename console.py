@@ -190,6 +190,8 @@ class HBNBCommand(cmd.Cmd):
             return
         if command == "all":
             self.do_all(class_arg)
+        else:
+            print(f"*** Unknown syntax: {arg}")
 
 
 if __name__ == '__main__':
